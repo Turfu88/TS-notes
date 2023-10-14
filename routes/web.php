@@ -15,5 +15,3 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [AppController::class, 'index']);
-Route::get('/login', [AppController::class, 'login']);
-Route::get('/inscription', [AppController::class, 'subscribe']);
