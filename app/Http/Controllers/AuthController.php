@@ -94,7 +94,15 @@ class AuthController extends Controller
         $user = Auth::user();
         return response()->json([
                 'status' => 'success',
-                'user' => $user,
+                'user' => [
+                    'id' => $user->id,
+                    'email' => $user->email,
+                    'name' => $user->name,
+                    'coef_low' => $user->coef_low,
+                    'coef_high' => $user->coef_high,
+                    'projects' => $user->projects
+                ],
+                'timesheets' => $user->timesheets
             ]);
     }
 

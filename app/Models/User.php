@@ -64,7 +64,7 @@ class User extends Authenticatable implements JWTSubject
     }
 
     /**
-     * Get the comments for the blog post.
+     * Get the timesheets for a user.
      */
     public function timesheets()
     {

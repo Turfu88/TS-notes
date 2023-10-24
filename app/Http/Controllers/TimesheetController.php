@@ -3,21 +3,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Timesheet;
+use Illuminate\Support\Facades\Auth;
 
 class TimesheetController extends Controller
 {
     public function __construct()
     {
         $this->middleware('auth:api');
-    }
-
-    public function index()
-    {
-        $timesheets = Timesheet::all();
-        return response()->json([
-            'status' => 'success',
-            'timesheets' => $timesheets,
-        ]);
     }
 
     public function store(Request $request)
@@ -33,29 +25,33 @@ class TimesheetController extends Controller
             'worktime_with_coef' => 'required|decimal:0,1'
         ]);
 
-        $timesheet = Timesheet::create([
-            'worktime' => $request->worktime,
-            'note' => $request->note,
-            'date' => $request->date,
-            'is_working' => $request->is_working,
-            'project' => $request->project,
-            'ticket' => $request->ticket,
-            'is_podio_updated' => $request->is_podio_updated,
-            'worktime_with_coef' => $request->worktime_with_coef,
-        ]);
+        $user = Auth::user();
+        $timesheet = new Timesheet();
+        $timesheet->worktime = $request->worktime;
+        $timesheet->note = $request->note;
+        $timesheet->date = $request->date;
+        $timesheet->is_working = $request->is_working;
+        $timesheet->project = $request->project;
+        $timesheet->ticket = $request->ticket;
+        $timesheet->is_podio_updated = $request->is_podio_updated;
+        $timesheet->worktime_with_coef = $request->worktime_with_coef;
+        $user->timesheets()->save($timesheet);
+
+        // $timesheet = Timesheet::create([
+        //     'worktime' => $request->worktime,
+        //     'note' => $request->note,
+        //     'date' => $request->date,
+        //     'is_working' => $request->is_working,
+        //     'project' => $request->project,
+        //     'ticket' => $request->ticket,
+        //     'is_podio_updated' => $request->is_podio_updated,
+        //     'worktime_with_coef' => $request->worktime_with_coef,
+        //     'user_id' => $user->id
+        // ]);
 
         return response()->json([
             'status' => 'success',
             'message' => 'timesheet created successfully',
-            'timesheet' => $timesheet,
-        ]);
-    }
-
-    public function show($id)
-    {
-        $timesheet = Timesheet::find($id);
-        return response()->json([
-            'status' => 'success',
             'timesheet' => $timesheet,
         ]);
     }
@@ -87,11 +83,19 @@ class TimesheetController extends Controller
     public function destroy($id)
     {
         $timesheet = Timesheet::find($id);
-        $timesheet->delete();
+        $user = Auth::user();
+        if ($timesheet->user_id === $user->id) {
+            $timesheet->delete();
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'timesheet deleted successfully',
-        ]);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'timesheet deleted successfully',
+            ]);
+        } else {
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Not authorized',
+            ]);
+        }
     }
 }

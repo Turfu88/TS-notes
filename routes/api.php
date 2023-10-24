@@ -22,14 +22,12 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('logout', 'logout');
     Route::post('refresh', 'refresh');
     Route::put('user/update', 'update');
-    Route::get('user', 'user');
+    Route::get('user', 'user');             // Cette requête récupère également les timesheets associées au user
 
 });
 
 Route::controller(TimesheetController::class)->group(function () {
-    Route::get('timesheets', 'index');
     Route::post('timesheet', 'store');
-    Route::get('timesheet/{id}', 'show');
     Route::put('timesheet/{id}', 'update');
     Route::delete('timesheet/{id}', 'destroy');
 });

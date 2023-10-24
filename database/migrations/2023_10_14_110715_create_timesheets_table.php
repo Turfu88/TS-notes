@@ -22,6 +22,8 @@ return new class extends Migration
             $table->decimal('worktime');
             $table->boolean('is_podio_updated');
             $table->decimal('worktime_with_coef');
+            $table->integer('user_id')->unsigned();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
     }
