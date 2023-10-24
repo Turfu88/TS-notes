@@ -8,5 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class Timesheet extends Model
 {
     use HasFactory;
-    protected $fillable = ['worktime', 'note'];
+    protected $fillable = [
+        'date',
+        'is_working',
+        'project',
+        'ticket',
+        'worktime',
+        'is_podio_updated',
+        'worktime_with_coef',
+        'note'
+    ];
 }

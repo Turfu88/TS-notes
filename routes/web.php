@@ -14,4 +14,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', [AppController::class, 'index']);
+Route::get('/', [AppController::class, 'index'])->name('index');
+Route::get('/connexion', [AppController::class, 'login'])->name('login');
+Route::get('/inscription', [AppController::class, 'register'])->name('register');
+Route::get('/dashboard', [AppController::class, 'dashboard'])->name('dashboard');
+Route::get('/parametres', [AppController::class, 'parameters'])->name('parameters');

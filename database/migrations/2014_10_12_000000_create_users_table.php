@@ -17,6 +17,9 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->decimal('coef_low');
+            $table->decimal('coef_high');
+            $table->string('projects');
             $table->rememberToken();
             $table->timestamps();
         });

@@ -4,6 +4,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
+use App\Models\Timesheet;
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -18,6 +19,9 @@ class User extends Authenticatable implements JWTSubject
         'name',
         'email',
         'password',
+        'coef_low',
+        'coef_high',
+        'projects'
     ];
 
     /**
@@ -57,5 +61,13 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    /**
+     * Get the comments for the blog post.
+     */
+    public function timesheets()
+    {
+        return $this->hasMany(Timesheet::class);
     }
 }

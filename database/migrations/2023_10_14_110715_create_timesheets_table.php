@@ -14,8 +14,14 @@ return new class extends Migration
     {
         Schema::create('timesheets', function (Blueprint $table) {
             $table->id();
-            $table->string('worktime');
+            $table->string('date');
             $table->string('note');
+            $table->string('is_working');
+            $table->string('project');
+            $table->integer('ticket');
+            $table->decimal('worktime');
+            $table->boolean('is_podio_updated');
+            $table->decimal('worktime_with_coef');
             $table->timestamps();
         });
     }

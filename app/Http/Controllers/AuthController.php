@@ -52,6 +52,9 @@ class AuthController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'coef_low' => $request->coef_low,
+            'coef_high' => $request->coef_high,
+            'projects' => ''
         ]);
 
         $token = Auth::login($user);
@@ -86,5 +89,34 @@ class AuthController extends Controller
             ]
         ]);
     }
+    public function user()
+    {
+        $user = Auth::user();
+        return response()->json([
+                'status' => 'success',
+                'user' => $user,
+            ]);
+    }
 
+
+    public function update(Request $request)
+    {
+        // $request->validate([
+        //     'worktime' => 'required|string|max:255',
+        //     'note' => 'required|string|max:255',
+        // ]);
+
+        $user = Auth::user();
+        $user->coef_low = $request->coef_low;
+        $user->coef_high = $request->coef_high;
+        $user->projects = $request->projects;
+
+        $user->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'user updated successfully',
+            'user' => $user,
+        ]);
+    }
 }

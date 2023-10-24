@@ -21,6 +21,9 @@
         "@event-calendar/day-grid": "^2.3.3",
         "@event-calendar/interaction": "^2.3.3",
         "@event-calendar/resource-time-grid": "^2.3.3",
-        "@event-calendar/time-grid": "^2.3.3"
+        "@event-calendar/time-grid": "^2.3.3",
+        "flowbite": "^1.8.1",
+        "flowbite-svelte": "^0.44.18",
+        "moment": "^2.29.4"
     }
 }
