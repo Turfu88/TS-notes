@@ -19,3 +19,4 @@ Route::get('/connexion', [AppController::class, 'login'])->name('login');
 Route::get('/inscription', [AppController::class, 'register'])->name('register');
 Route::get('/dashboard', [AppController::class, 'dashboard'])->name('dashboard');
 Route::get('/parametres', [AppController::class, 'parameters'])->name('parameters');
+Route::get('/logout', [AppController::class, 'logout'])->name('logout');

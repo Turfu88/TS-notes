@@ -22,6 +22,7 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('logout', 'logout');
     Route::post('refresh', 'refresh');
     Route::put('user/update', 'update');
+    Route::get('user/info', 'userInfo');
     Route::get('user', 'user');             // Cette requête récupère également les timesheets associées au user
 
 });

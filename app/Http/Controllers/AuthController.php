@@ -10,7 +10,7 @@ class AuthController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login','register']]);
+        $this->middleware('auth:api', ['except' => ['login','register', 'userInfo']]);
     }
 
     public function login(Request $request)
@@ -89,6 +89,29 @@ class AuthController extends Controller
             ]
         ]);
     }
+
+    public function userInfo()
+    {
+        $user = Auth::user();
+        if (null === $user) {
+            return response()->json([
+                'status' => 'failed',
+                'user' => null,
+            ]);
+        }
+        return response()->json([
+            'status' => 'success',
+            'user' => [
+                'id' => $user->id,
+                'email' => $user->email,
+                'name' => $user->name,
+                'coef_low' => $user->coef_low,
+                'coef_high' => $user->coef_high,
+                'projects' => $user->projects
+            ],
+        ]);
+    }
+
     public function user()
     {
         $user = Auth::user();

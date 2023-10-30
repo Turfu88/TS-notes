@@ -1,9 +1,14 @@
 <?php
 
 namespace App\Http\Controllers;
-use Inertia\Response;
 
-class AppController extends Controller {
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
+use Inertia\Response;
+use Illuminate\Http\Request;
+
+class AppController extends Controller
+{
     public function __construct()
     {
         // $this->middleware('auth:api', ['except' => ['index','login','register']]);
@@ -40,7 +45,13 @@ class AppController extends Controller {
     public function parameters(): Response
     {
         return inertia('Parameters', [
-            'title' => 'Parameters page'
+            'title' => 'Paramètres'
         ]);
+    }
+
+    public function logout()
+    {
+        Session::flush();
+        return redirect('/connexion');
     }
 }
