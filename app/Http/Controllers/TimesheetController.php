@@ -14,45 +14,47 @@ class TimesheetController extends Controller
 
     public function store(Request $request)
     {
+        
         $request->validate([
             'worktime' => 'required|decimal:0,1',
-            'note' => 'required|string|max:255',
+            'note' => 'string|nullable|max:255',
             'date' => 'required|string|max:10',
             'is_working' => 'required|boolean',
-            'project' => 'required|string|max:255',
+            'project' => 'string|nullable|max:255',
             'ticket' => 'required|integer',
             'is_podio_updated' => 'required|boolean',
-            'worktime_with_coef' => 'required|decimal:0,1'
+            'worktime_with_coef' => 'decimal:0,1'
         ]);
-
         $user = Auth::user();
-        $timesheet = new Timesheet();
-        $timesheet->worktime = $request->worktime;
-        $timesheet->note = $request->note;
-        $timesheet->date = $request->date;
-        $timesheet->is_working = $request->is_working;
-        $timesheet->project = $request->project;
-        $timesheet->ticket = $request->ticket;
-        $timesheet->is_podio_updated = $request->is_podio_updated;
-        $timesheet->worktime_with_coef = $request->worktime_with_coef;
-        $user->timesheets()->save($timesheet);
 
-        // $timesheet = Timesheet::create([
+        // return response()->json([
+        //     'status' => 'success',
+        //     'message' => 'timesheet created successfully',
         //     'worktime' => $request->worktime,
         //     'note' => $request->note,
         //     'date' => $request->date,
         //     'is_working' => $request->is_working,
         //     'project' => $request->project,
-        //     'ticket' => $request->ticket,
         //     'is_podio_updated' => $request->is_podio_updated,
-        //     'worktime_with_coef' => $request->worktime_with_coef,
-        //     'user_id' => $user->id
+        //     'worktime_with_coef' => $user->coef_low
         // ]);
+
+        $timesheet = new Timesheet();
+        $timesheet->worktime = $request->worktime;
+        $timesheet->note = $request->note === null ? '' : $request->note;
+        $timesheet->date = $request->date;
+        $timesheet->is_working = $request->is_working;
+        $timesheet->project = $request->project === null ? '' : $request->note;
+        $timesheet->ticket = $request->ticket;
+        $timesheet->is_podio_updated = $request->is_podio_updated;
+        $timesheet->worktime_with_coef = $user->coef_low;
+        $user->timesheets()->save($timesheet);
 
         return response()->json([
             'status' => 'success',
             'message' => 'timesheet created successfully',
             'timesheet' => $timesheet,
+            'note' => $request->note
         ]);
     }
 

@@ -22,20 +22,20 @@
 
     let isLoading = true;
     let user = null;
-    let timesheets = [];
+    let userTimesheets = [];
     let plugins = [TimeGrid, DayGrid, ResourceTimeGrid, Interaction];
     let options = null;
 
     onMount(async () => {
         const res = await getUser();
         user = res.user;
-        timesheets = res.timesheets;
+        userTimesheets = res.timesheets;
         options = {
             view: "dayGridMonth",
             firstDay: 1,
             dateClick: (e) => handleDateClick(e),
             eventClick: (e) => handleEventClick(e),
-            events: createEvents(res.timesheets),
+            events: createEvents(userTimesheets),
         };
         isLoading = false;
     });
@@ -101,7 +101,7 @@
                     >
                         Retour
                     </Button>
-                    <DayView selectedDay={selectedDay} />
+                    <DayView selectedDay={selectedDay} userTimesheets={userTimesheets} />
                 </div>
             {/if}
         </div>
