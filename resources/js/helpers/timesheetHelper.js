@@ -24,12 +24,15 @@ export function prepareValuesForRequest(values, date) {
 }
 
 export function getTimesheetsConsumption(timesheets) {
+    if (undefined === timesheets) {
+        return {totalWorktime: 0, totalWorktimeUpdatedOnPodio: 0};
+    }
     const totalWorktime = timesheets.reduce((currentTotal, item) => {
-        return item.worktime + currentTotal
+        return parseInt(item.worktime) + currentTotal;
     }, 0);
     const totalWorktimeUpdatedOnPodio = timesheets.reduce((currentTotal, item) => {
-        return item.is_podio_updated ? item.worktime + currentTotal : currentTotal
+        return item.is_podio_updated ? parseInt(item.worktime) + currentTotal : currentTotal;
     }, 0);
-    
+
     return {totalWorktime, totalWorktimeUpdatedOnPodio};
 }

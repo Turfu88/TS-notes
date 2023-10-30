@@ -1,9 +1,11 @@
 <script>
+    import { createEventDispatcher } from "svelte";
     import moment from "moment";
     import TimesheetTypeSelector from "../Components/TimesheetTypeSelector.svelte";
     import TimesheetProjectSelector from "../Components/TimesheetProjectSelector.svelte";
     import TimesheetTimeSelector from "../Components/TimesheetTimeSelector.svelte";
     import TimesheetTimeOffSelector from "../Components/TimesheetTimeOffSelector.svelte";
+    import { createForm } from "svelte-forms-lib";
     import {
         prepareValuesForRequest,
         getTimesheetsConsumption,
@@ -15,7 +17,6 @@
         Button,
         Progressbar,
     } from "flowbite-svelte";
-    import { createForm } from "svelte-forms-lib";
     import {
         createTimesheet,
         updateTimesheet,
@@ -23,6 +24,7 @@
     } from "../../api/timesheet";
 
     const progressGraduation = ["0", "1", "2", "3", "4", "5", "6", "7"];
+    const dispatch = createEventDispatcher();
     export let selectedDay;
     export let userTimesheets;
     export let timesheetType = "worked";
@@ -41,10 +43,11 @@
     };
 
     const dayFormated = moment(selectedDay).format("YYYY-MM-D");
-    const timesheetsFromDay = userTimesheets.filter(
+    let timesheetsFromDay = userTimesheets.filter(
         (timesheet) => timesheet.date === dayFormated
     );
-    const consumption = getTimesheetsConsumption(timesheetsFromDay);
+    console.log(timesheetsFromDay);
+    let consumption = getTimesheetsConsumption(timesheetsFromDay);
     const { form, errors, handleChange, handleSubmit } = createForm({
         initialValues: formInit,
         validate: (values) => {
@@ -71,6 +74,14 @@
                     (response) => {
                         // TODO: update userTimesheets request
                         console.log(response);
+                        dispatch("invalidateTimesheets");
+                        timesheetsFromDay = timesheetsFromDay.map((timesheet) => {
+                            if (timesheet.id === timesheetToUpdate.id) {
+                                return response.timesheet;
+                            }
+                            return timesheet;
+                        });
+                        consumption = getTimesheetsConsumption(timesheetsFromDay)
                     }
                 );
             } else {
@@ -81,6 +92,11 @@
                 createTimesheet(valuesPrepared).then((response) => {
                     // TODO: update userTimesheets request
                     console.log(response);
+                    dispatch("invalidateTimesheets");
+                    timesheetsFromDay = timesheetsFromDay.concat([response.timesheet]);
+                    console.log(timesheetsFromDay);
+                    consumption = getTimesheetsConsumption(timesheetsFromDay);
+                    console.log(consumption);
                 });
             }
         },
@@ -155,6 +171,9 @@
         removeTimesheet(timesheetToUpdate.id).then((response) => {
             // TODO: update userTimesheets request
             console.log(response);
+            dispatch("invalidateTimesheets");
+            timesheetsFromDay = timesheetsFromDay.filter((timesheet) => timesheet.id !== timesheetToUpdate.id);
+            consumption = getTimesheetsConsumption(timesheetsFromDay);
             isUpdatingMode = false;
             timesheetToUpdate = null;
             form.set(formInit);
@@ -192,7 +211,7 @@
     {#each timesheetsFromDay as timesheet}
         <div class="mt-2 text-xl flex justify-between">
             <p>
-                {timesheet.project} - {timesheet.ticket} - {timesheet.worktime}
+                {timesheet.project} - {timesheet.ticket} - {timesheet.worktime} - {timesheet.note}
             </p>
             {#if true === isUpdatingMode && timesheet.id === timesheetToUpdate.id}
                 <button type="button" on:click={handleCancelUpdatingMode}>
@@ -216,10 +235,8 @@
     </p>
     {#if true === isUpdatingMode}
         <div class="flex justify-center">
-            <Button
-                color="red"
-                type="button"
-                on:click={handleDeleteTimesheet}>Supprimer</Button
+            <Button color="red" type="button" on:click={handleDeleteTimesheet}
+                >Supprimer</Button
             >
         </div>
     {/if}

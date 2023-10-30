@@ -19,7 +19,6 @@
     import { getUser } from "../api/user";
     import { createEvents } from "../helpers/calendar";
 
-
     let isLoading = true;
     let user = null;
     let userTimesheets = [];
@@ -39,6 +38,21 @@
         };
         isLoading = false;
     });
+
+    async function handleInvalidateTimesheets() {
+        const res = await getUser();
+        user = res.user;
+        console.log(userTimesheets);
+        userTimesheets = res.timesheets;
+        console.log(res.timesheets);
+        options = {
+            view: "dayGridMonth",
+            firstDay: 1,
+            dateClick: (e) => handleDateClick(e),
+            eventClick: (e) => handleEventClick(e),
+            events: createEvents(userTimesheets),
+        };
+    }
 
     function handleDateClick(e) {
         selectedDay = e.date;
@@ -101,7 +115,7 @@
                     >
                         Retour
                     </Button>
-                    <DayView selectedDay={selectedDay} userTimesheets={userTimesheets} />
+                    <DayView selectedDay={selectedDay} userTimesheets={userTimesheets} on:invalidateTimesheets={handleInvalidateTimesheets} />
                 </div>
             {/if}
         </div>
