@@ -22,11 +22,11 @@ export default async function request(url, method = "POST", values = null, inclu
     json = await fetch(url, requestOptions)
         .then(response => {
             status = response.status;
-            console.log(response);
+            // console.log(response);
             return response.text();
         })
         .then(result => {
-            console.log(result);
+            // console.log(result);
             if(result) return JSON.parse(result);
             return;
         })

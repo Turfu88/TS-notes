@@ -4,7 +4,6 @@ import jwt_decode from "jwt-decode";
 
 export async function login(params) {
     return await request('/api/login', "POST", params).then((res) => {
-        console.log(res);
         if (res.status === 200) {
             Cookies.set('token', res.json.authorisation.token);
             return true;
@@ -30,7 +29,6 @@ export async function createUser(params) {
 
 export async function getUserInfo() {
     return await request(`/api/user/info`, "GET", null, true).then((res) => {
-        console.log(res);
         if (res.status === 200) {
             return res.json;
         }
@@ -40,7 +38,6 @@ export async function getUserInfo() {
 
 export async function getUser() {
     return await request(`/api/user`, "GET", null, true).then((res) => {
-        console.log(res);
         if (res.status === 200) {
             return res.json;
         }

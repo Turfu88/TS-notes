@@ -8,33 +8,35 @@
     import Interaction from "@event-calendar/interaction";
     import "@event-calendar/core/index.css";
     import ViewSelector from "./Components/ViewSelector.svelte";
-    import DayView from "./Components/DayView.svelte"
+    import DayView from "./Components/DayView.svelte";
     import { momentLocale } from "./Components/MomentWithLocale.js";
-    import {
-        Button,
-        Spinner,
-        Progressbar
-    } from "flowbite-svelte";
+    import { Button, Spinner } from "flowbite-svelte";
     import StatMonthSelector from "./Components/StatMonthSelector.svelte";
     import { getUser } from "../api/user";
-    import { createEvents } from "../helpers/calendar";
+    import { createEvents, getBankHolidays } from "../helpers/calendar";
+    import MonthViewStat from "./Components/MonthViewStat.svelte";
 
     let isLoading = true;
     let user = null;
     let userTimesheets = [];
     let plugins = [TimeGrid, DayGrid, ResourceTimeGrid, Interaction];
     let options = null;
+    let bankHolidays = null;
 
     onMount(async () => {
         const res = await getUser();
         user = res.user;
         userTimesheets = res.timesheets;
+
+        bankHolidays = await getBankHolidays();
+        console.log(bankHolidays);
+
         options = {
             view: "dayGridMonth",
             firstDay: 1,
             dateClick: (e) => handleDateClick(e),
             eventClick: (e) => handleEventClick(e),
-            events: createEvents(userTimesheets),
+            events: createEvents(userTimesheets, bankHolidays),
         };
         isLoading = false;
     });
@@ -50,7 +52,7 @@
             firstDay: 1,
             dateClick: (e) => handleDateClick(e),
             eventClick: (e) => handleEventClick(e),
-            events: createEvents(userTimesheets),
+            events: createEvents(userTimesheets, bankHolidays),
         };
     }
 
@@ -69,10 +71,6 @@
         view = value;
     }
 
-    function getMonthProgressValue(value, workDaysPerMonth) {
-        return (value * 100) / workDaysPerMonth;
-    }
-
     export let view = "calendar";
     export let selectedDay = null;
 </script>
@@ -89,17 +87,7 @@
                 </div>
             {:else if view === "stat"}
                 <ViewSelector change={handleChangeView} {view} />
-                <StatMonthSelector />
-                <div class="container">
-                    <div class="flex justify-between">
-                        <div>0 jour</div>
-                        <div>21 jours</div>
-                    </div>
-                    <Progressbar
-                        progress={getMonthProgressValue(20, 21)}
-                        size="h-4"
-                    />
-                </div>
+                <MonthViewStat {userTimesheets} {bankHolidays} />
             {:else if view === "timesheet"}
                 <ViewSelector change={handleChangeView} {view} />
                 <StatMonthSelector />
@@ -115,7 +103,11 @@
                     >
                         Retour
                     </Button>
-                    <DayView selectedDay={selectedDay} userTimesheets={userTimesheets} on:invalidateTimesheets={handleInvalidateTimesheets} />
+                    <DayView
+                        {selectedDay}
+                        {userTimesheets}
+                        on:invalidateTimesheets={handleInvalidateTimesheets}
+                    />
                 </div>
             {/if}
         </div>
