@@ -11,10 +11,10 @@
     import DayView from "./Components/DayView.svelte";
     import { momentLocale } from "./Components/MomentWithLocale.js";
     import { Button, Spinner } from "flowbite-svelte";
-    import StatMonthSelector from "./Components/StatMonthSelector.svelte";
     import { getUser } from "../api/user";
     import { createEvents, getBankHolidays } from "../helpers/calendar";
     import MonthViewStat from "./Components/MonthViewStat.svelte";
+    import MonthViewTimesheet from "./Components/MonthViewTimesheet.svelte";
 
     let isLoading = true;
     let user = null;
@@ -90,11 +90,11 @@
                 <MonthViewStat {userTimesheets} {bankHolidays} />
             {:else if view === "timesheet"}
                 <ViewSelector change={handleChangeView} {view} />
-                <StatMonthSelector />
-
-                <div class="container">
-                    <p>Timesheet</p>
-                </div>
+                <MonthViewTimesheet
+                    {userTimesheets}
+                    {bankHolidays}
+                    on:invalidateTimesheets={handleInvalidateTimesheets}
+                />
             {:else if view === "day"}
                 <div class="container">
                     <Button

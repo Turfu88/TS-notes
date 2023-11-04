@@ -92,7 +92,7 @@ export function getTotalHoursPerTicket(timesheets) {
         } else {
             totalHoursPerTicket = totalHoursPerTicket.map((ticket) => {
                 if (ticket.ticket === timesheet.ticket && ticket.project === timesheet.project) {
-                    return {...ticket, worktime: ticket.worktime + timesheet.worktime};
+                    return { ...ticket, worktime: ticket.worktime + timesheet.worktime };
                 }
                 return ticket;
             })
@@ -103,7 +103,7 @@ export function getTotalHoursPerTicket(timesheets) {
 }
 
 export function getTotalWorkedByProject(project, timesheets) {
-    const totalHourWorked =  timesheets.reduce((currentTotal, timesheet) => {
+    const totalHourWorked = timesheets.reduce((currentTotal, timesheet) => {
         if (timesheet.project === project) {
             return timesheet.worktime + currentTotal;
         }
@@ -119,4 +119,30 @@ export function formatDays(daysWorked) {
     }
 
     return `${(Math.ceil((daysWorked) * 10) / 10).toFixed(1)} jour${daysWorked >= 2 ? 's' : ''}`;
+}
+
+export function getTimesheetsOrderedByDay(timesheets) {
+    const timesheetsOrdered = timesheets.sort(function (a, b) {
+        return new Date(a.date) - new Date(b.date);
+    });
+    console.log(timesheetsOrdered);
+    let out = [];
+    timesheetsOrdered.forEach((timesheet) => {
+        const dateExists = out.find((date) => date.date === timesheet.date);
+        if (undefined === dateExists) {
+            out.push({
+                date: timesheet.date,
+                timesheets: [timesheet]
+            });
+        } else {
+            out = out.map((date) => {
+                if (date.date === timesheet.date) {
+                    return { ...date, timesheets: date.timesheets.concat(timesheet) };
+                }
+                return date;
+            })
+        }
+    });
+
+    return out;
 }
