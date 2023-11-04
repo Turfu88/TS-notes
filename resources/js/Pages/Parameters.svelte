@@ -5,6 +5,7 @@
     import { getUserInfo } from "../api/user";
 
     export let title;
+    
     let user;
     let isLoading = true;
 
@@ -14,7 +15,6 @@
         if (!user) {
             window.location.href = `/connexion`;
         }
-        console.log(user);
         isLoading = false;
     });
 </script>

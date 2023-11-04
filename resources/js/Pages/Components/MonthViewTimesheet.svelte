@@ -1,7 +1,7 @@
 <script>
     import StatMonthSelector from "./StatMonthSelector.svelte";
     import { createEventDispatcher } from "svelte";
-    import { momentLocale } from "../Components/MomentWithLocale.js";
+    import { momentLocale } from "../../lib/MomentWithLocale.js";
     import {
         Table,
         TableBody,
@@ -40,11 +40,9 @@
     );
 
     function handleUpdatePodio(timesheet) {
-        console.log(timesheet);
         if (!timesheet.is_podio_updated) {
             timesheet.is_podio_updated = true;
             updateTimesheet(timesheet.id, timesheet).then((response) => {
-                console.log(response);
                 dispatch("invalidateTimesheets");
                 timesheetsFromSelectedMonth = filterTimesheetsFromSelectedMonth(userTimesheets, selectedMonth);
                 timesheetsOrderedByDay = getTimesheetsOrderedByDay(timesheetsFromSelectedMonth);
@@ -52,7 +50,6 @@
         } else {
             timesheet.is_podio_updated = false;
             updateTimesheet(timesheet.id, timesheet).then((response) => {
-                console.log(response);
                 dispatch("invalidateTimesheets");
                 timesheetsFromSelectedMonth = filterTimesheetsFromSelectedMonth(userTimesheets, selectedMonth);
                 timesheetsOrderedByDay = getTimesheetsOrderedByDay(timesheetsFromSelectedMonth);
@@ -61,8 +58,6 @@
     }
 
     function isDayValid(timesheets) {
-        console.log(timesheets);
-
         const totalHoursUpdated = timesheets.reduce((currentTotal, timesheet) => {
             if (timesheet.is_podio_updated) {
                 return timesheet.worktime + currentTotal;
@@ -91,7 +86,6 @@
         timesheetsOrderedByDay = getTimesheetsOrderedByDay(
             timesheetsFromSelectedMonth
         );
-        console.log(timesheetsOrderedByDay);
     }
 </script>
 

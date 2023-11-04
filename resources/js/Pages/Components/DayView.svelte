@@ -46,7 +46,6 @@
     let timesheetsFromDay = userTimesheets.filter(
         (timesheet) => timesheet.date === dayFormated
     );
-    console.log(timesheetsFromDay);
     let consumption = getTimesheetsConsumption(timesheetsFromDay);
     const { form, errors, handleChange, handleSubmit } = createForm({
         initialValues: formInit,
@@ -68,11 +67,8 @@
         },
         onSubmit: (values) => {
             if (true === isUpdatingMode) {
-                console.log("update request:", values);
-                console.log(timesheetToUpdate);
                 updateTimesheet(timesheetToUpdate.id, timesheetToUpdate).then(
                     (response) => {
-                        console.log(response);
                         dispatch("invalidateTimesheets");
                         timesheetsFromDay = timesheetsFromDay.map((timesheet) => {
                             if (timesheet.id === timesheetToUpdate.id) {
@@ -89,12 +85,9 @@
                     selectedDay
                 );
                 createTimesheet(valuesPrepared).then((response) => {
-                    console.log(response);
                     dispatch("invalidateTimesheets");
                     timesheetsFromDay = timesheetsFromDay.concat([response.timesheet]);
-                    console.log(timesheetsFromDay);
                     consumption = getTimesheetsConsumption(timesheetsFromDay);
-                    console.log(consumption);
                 });
             }
         },
@@ -121,7 +114,6 @@
     }
 
     function handleChangeTimesheetTime(value) {
-        console.log(value);
         timesheetTime = value;
         handleChange({
             target: {
@@ -146,7 +138,6 @@
     }
 
     function handleChangeUpdatingMode(timesheet) {
-        console.log("updade:", timesheet);
         isUpdatingMode = true;
         timesheetToUpdate = {
             ...timesheet,
@@ -158,7 +149,6 @@
     }
 
     function handleCancelUpdatingMode() {
-        console.log("cancel update:");
         isUpdatingMode = false;
         timesheetToUpdate = null;
         form.set(formInit);
@@ -168,7 +158,6 @@
 
     function handleDeleteTimesheet() {
         removeTimesheet(timesheetToUpdate.id).then((response) => {
-            console.log(response);
             dispatch("invalidateTimesheets");
             timesheetsFromDay = timesheetsFromDay.filter((timesheet) => timesheet.id !== timesheetToUpdate.id);
             consumption = getTimesheetsConsumption(timesheetsFromDay);

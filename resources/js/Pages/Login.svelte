@@ -14,9 +14,7 @@
             password: yup.string().required(),
         }),
         onSubmit: (values) => {
-            console.log(values);
             login(values).then((userIsIdentified) => {
-                console.log(userIsIdentified);
                 if (userIsIdentified) {
                     window.location.href = `/dashboard`;
                 }

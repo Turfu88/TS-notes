@@ -25,9 +25,7 @@
             projects: yup.array().min(1)
         }),
         onSubmit: (values) => {
-            console.log(values);
             createUser(values).then((userIsIdentified) => {
-                console.log(userIsIdentified);
                 if (userIsIdentified) {
                     window.location.href = `/dashboard`;
                 }

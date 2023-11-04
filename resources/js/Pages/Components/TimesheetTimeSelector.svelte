@@ -4,14 +4,10 @@
     export let timesheetTime;
     export let currentWortime;
 
-    console.log(timesheetTime);
-    console.log(currentWortime);
-  
     let extra = 0;
 
     function updateTime(time) {
         time = time + extra;
-        console.log("selected :", time, extra);
         change(time.toString());
     }
 

@@ -9,7 +9,7 @@
     import "@event-calendar/core/index.css";
     import ViewSelector from "./Components/ViewSelector.svelte";
     import DayView from "./Components/DayView.svelte";
-    import { momentLocale } from "./Components/MomentWithLocale.js";
+    import { momentLocale } from "../lib/MomentWithLocale.js";
     import { Button, Spinner } from "flowbite-svelte";
     import { getUser } from "../api/user";
     import { createEvents, getBankHolidays } from "../helpers/calendar";
@@ -27,10 +27,7 @@
         const res = await getUser();
         user = res.user;
         userTimesheets = res.timesheets;
-
         bankHolidays = await getBankHolidays();
-        console.log(bankHolidays);
-
         options = {
             view: "dayGridMonth",
             firstDay: 1,
@@ -44,9 +41,7 @@
     async function handleInvalidateTimesheets() {
         const res = await getUser();
         user = res.user;
-        console.log(userTimesheets);
         userTimesheets = res.timesheets;
-        console.log(res.timesheets);
         options = {
             view: "dayGridMonth",
             firstDay: 1,

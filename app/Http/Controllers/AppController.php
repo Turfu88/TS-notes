@@ -24,14 +24,14 @@ class AppController extends Controller
     public function login(): Response
     {
         return inertia('Login', [
-            'title' => 'Login page'
+            'title' => 'Connexion'
         ]);
     }
 
     public function register(): Response
     {
         return inertia('Register', [
-            'title' => 'Register page'
+            'title' => 'Inscription'
         ]);
     }
 
