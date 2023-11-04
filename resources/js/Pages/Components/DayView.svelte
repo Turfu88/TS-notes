@@ -29,7 +29,7 @@
     export let userTimesheets;
     export let timesheetType = "worked";
     export let timesheetProject = null;
-    export let timesheetTime = null;
+    export let timesheetTime = 0;
     export let isUpdatingMode = false;
     export let timesheetToUpdate = null;
     const formInit = {
@@ -72,7 +72,6 @@
                 console.log(timesheetToUpdate);
                 updateTimesheet(timesheetToUpdate.id, timesheetToUpdate).then(
                     (response) => {
-                        // TODO: update userTimesheets request
                         console.log(response);
                         dispatch("invalidateTimesheets");
                         timesheetsFromDay = timesheetsFromDay.map((timesheet) => {
@@ -90,7 +89,6 @@
                     selectedDay
                 );
                 createTimesheet(valuesPrepared).then((response) => {
-                    // TODO: update userTimesheets request
                     console.log(response);
                     dispatch("invalidateTimesheets");
                     timesheetsFromDay = timesheetsFromDay.concat([response.timesheet]);
@@ -123,11 +121,12 @@
     }
 
     function handleChangeTimesheetTime(value) {
+        console.log(value);
         timesheetTime = value;
         handleChange({
             target: {
                 name: "worktime",
-                value: value,
+                value: value.toString(),
             },
         });
     }
@@ -154,7 +153,7 @@
             worktime: timesheet.worktime.toString(),
         };
         form.set(timesheetToUpdate);
-        timesheetTime = timesheet.worktime.toString();
+        timesheetTime = timesheet.worktime;
         timesheetProject = timesheet.project;
     }
 
@@ -164,12 +163,11 @@
         timesheetToUpdate = null;
         form.set(formInit);
         timesheetProject = null;
-        timesheetTime = null;
+        timesheetTime = 0;
     }
 
     function handleDeleteTimesheet() {
         removeTimesheet(timesheetToUpdate.id).then((response) => {
-            // TODO: update userTimesheets request
             console.log(response);
             dispatch("invalidateTimesheets");
             timesheetsFromDay = timesheetsFromDay.filter((timesheet) => timesheet.id !== timesheetToUpdate.id);
@@ -178,7 +176,7 @@
             timesheetToUpdate = null;
             form.set(formInit);
             timesheetProject = null;
-            timesheetTime = null;
+            timesheetTime = 0;
         });
     }
 </script>
@@ -287,6 +285,7 @@
                 <TimesheetTimeSelector
                     change={handleChangeTimesheetTime}
                     {timesheetTime}
+                    currentWortime={consumption.totalWorktime}
                 />
             </div>
             {#if $errors.worktime}
