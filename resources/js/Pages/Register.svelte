@@ -30,6 +30,7 @@
             projects: yup.array().min(1)
         }),
         onSubmit: (values) => {
+            values.projects = JSON.stringify(values.projects);
             createUser(values).then((userIsIdentified) => {
                 if (userIsIdentified) {
                     window.location.href = `/dashboard`;
