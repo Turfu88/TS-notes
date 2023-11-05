@@ -27,6 +27,7 @@
     const dispatch = createEventDispatcher();
     export let selectedDay;
     export let userTimesheets;
+    export let user;
     export let timesheetType = "worked";
     export let timesheetProject = null;
     export let timesheetTime = 0;
@@ -43,9 +44,7 @@
     };
 
     const dayFormated = moment(selectedDay).format("YYYY-MM-D");
-    let timesheetsFromDay = userTimesheets.filter(
-        (timesheet) => timesheet.date === dayFormated
-    );
+    let timesheetsFromDay = userTimesheets.filter((timesheet) => timesheet.date === dayFormated);
     let consumption = getTimesheetsConsumption(timesheetsFromDay);
     const { form, errors, handleChange, handleSubmit } = createForm({
         initialValues: formInit,
@@ -246,6 +245,7 @@
                 <TimesheetProjectSelector
                     change={handleChangeTimesheetProject}
                     {timesheetProject}
+                    {user}
                 />
             </div>
             {#if $errors.project}

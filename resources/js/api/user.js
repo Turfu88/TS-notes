@@ -1,6 +1,7 @@
 import request from "./request";
 import Cookies from 'js-cookie';
 import jwt_decode from "jwt-decode";
+import { getProjects } from "./project";
 
 export async function login(params) {
     return await request('/api/login', "POST", params).then((res) => {
@@ -63,4 +64,11 @@ export function isLogedIn() {
     }
 
     return false;
+}
+
+export function getUserProjects(user) {
+    const allProjects = getProjects();
+    return JSON.parse(user.projects).map((id) => {
+        return allProjects.find((project) => project.id === id);
+    });
 }

@@ -54,7 +54,7 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
             'coef_low' => $request->coef_low,
             'coef_high' => $request->coef_high,
-            'projects' => ''
+            'projects' => $request->projects
         ]);
 
         $token = Auth::login($user);

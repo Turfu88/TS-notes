@@ -2,10 +2,15 @@
     import Layout from "./Components/Layout.svelte";
     import { createForm } from "svelte-forms-lib";
     import { createUser } from "../api/user";
+    import { getProjects} from "../api/project";
     import * as yup from "yup";
+    import { Button } from "flowbite-svelte";
 
     export let title;
+
     let projects = [];
+    let projectsList = getProjects();
+    console.log(projectsList);
 
     const { form, errors, handleChange, handleSubmit } = createForm({
         initialValues: {
@@ -20,8 +25,8 @@
             name: yup.string().required(),
             email: yup.string().email().required(),
             password: yup.string().required(),
-            coef_low: yup.string().required(),
-            coef_high: yup.string().required(),
+            coef_low: yup.number().required().positive().lessThan(5),
+            coef_high: yup.number().required().positive().lessThan(5),
             projects: yup.array().min(1)
         }),
         onSubmit: (values) => {
@@ -131,50 +136,20 @@
             <div class="flex flex-col justify-start">
                 <div class="text-start">Projets</div>
                 <div class="grid grid-cols-3 gap-3">
-                    <button
-                        class="border rounded-lg p-1 {projects.includes(
-                            'RRG'
-                        )
-                            ? 'bg-green-200 border-green-600'
-                            : ''}"
-                        on:click={() => toggleProject("RRG")}
-                        type="button"
-                    >
-                        RRG
-                    </button>
-                    <button
-                        class="border rounded-lg p-1 {projects.includes(
-                            'Eiffage'
-                        )
-                            ? 'bg-green-200 border-green-600'
-                            : ''}"
-                        on:click={() => toggleProject("Eiffage")}
-                        type="button"
-                    >
-                        Djust (Eiffage)
-                    </button>
-                    <button
-                        class="border rounded-lg p-1 {projects.includes(
-                            'Monoprix'
-                        )
-                            ? 'bg-green-200 border-green-600'
-                            : ''}"
-                        on:click={() => toggleProject("Monoprix")}
-                        type="button"
-                    >
-                        Djust (Monoprix)
-                    </button>
-                    <button
-                        class="border rounded-lg p-1 {projects.includes(
-                            'Seafoodia'
-                        )
-                            ? 'bg-green-200 border-green-600'
-                            : ''}"
-                        on:click={() => toggleProject("Seafoodia")}
-                        type="button"
-                    >
-                        Djust (Seafoodia)
-                    </button>
+                    {#each projectsList as project}
+                        <Button
+                            outline
+                            color="black"
+                            class="border rounded-lg p-1 w-36 {projects.includes(project.id)
+                                ? 'bg-green-200 border-green-600'
+                                : ''}"
+                            on:click={() => toggleProject(project.id)}
+                            type="button"
+                        >
+                            {project.name !== project.company ? `${project.name} (${project.company})` : project.name}
+                        </Button>
+                    {/each}
+                    
                 </div>
                 {#if $errors.projects}
                     <small>{$errors.projects}</small>

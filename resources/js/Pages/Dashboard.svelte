@@ -101,6 +101,7 @@
                     <DayView
                         {selectedDay}
                         {userTimesheets}
+                        {user}
                         on:invalidateTimesheets={handleInvalidateTimesheets}
                     />
                 </div>
