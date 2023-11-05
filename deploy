@@ -1,0 +1,3 @@
+#!/bin/sh
+yarn run build
+rsync -av ./ clementsqf@ssh.cluster023.hosting.ovh.net:~/ts-notes --include=vendor --include=public/.htaccess --include=public/build --exclude-from=.gitignore --exclude=vendor --exclude=".*"
