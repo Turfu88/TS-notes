@@ -16,6 +16,12 @@
         Checkbox,
         Button,
         Progressbar,
+        Table,
+        TableBody,
+        TableBodyCell,
+        TableBodyRow,
+        TableHead,
+        TableHeadCell
     } from "flowbite-svelte";
     import {
         createTimesheet,
@@ -44,7 +50,9 @@
     };
 
     const dayFormated = moment(selectedDay).format("YYYY-MM-D");
-    let timesheetsFromDay = userTimesheets.filter((timesheet) => timesheet.date === dayFormated);
+    let timesheetsFromDay = userTimesheets.filter(
+        (timesheet) => timesheet.date === dayFormated
+    );
     let consumption = getTimesheetsConsumption(timesheetsFromDay);
     const { form, errors, handleChange, handleSubmit } = createForm({
         initialValues: formInit,
@@ -69,13 +77,16 @@
                 updateTimesheet(timesheetToUpdate.id, timesheetToUpdate).then(
                     (response) => {
                         dispatch("invalidateTimesheets");
-                        timesheetsFromDay = timesheetsFromDay.map((timesheet) => {
-                            if (timesheet.id === timesheetToUpdate.id) {
-                                return response.timesheet;
+                        timesheetsFromDay = timesheetsFromDay.map(
+                            (timesheet) => {
+                                if (timesheet.id === timesheetToUpdate.id) {
+                                    return response.timesheet;
+                                }
+                                return timesheet;
                             }
-                            return timesheet;
-                        });
-                        consumption = getTimesheetsConsumption(timesheetsFromDay)
+                        );
+                        consumption =
+                            getTimesheetsConsumption(timesheetsFromDay);
                     }
                 );
             } else {
@@ -85,7 +96,9 @@
                 );
                 createTimesheet(valuesPrepared).then((response) => {
                     dispatch("invalidateTimesheets");
-                    timesheetsFromDay = timesheetsFromDay.concat([response.timesheet]);
+                    timesheetsFromDay = timesheetsFromDay.concat([
+                        response.timesheet,
+                    ]);
                     consumption = getTimesheetsConsumption(timesheetsFromDay);
                 });
             }
@@ -158,7 +171,9 @@
     function handleDeleteTimesheet() {
         removeTimesheet(timesheetToUpdate.id).then((response) => {
             dispatch("invalidateTimesheets");
-            timesheetsFromDay = timesheetsFromDay.filter((timesheet) => timesheet.id !== timesheetToUpdate.id);
+            timesheetsFromDay = timesheetsFromDay.filter(
+                (timesheet) => timesheet.id !== timesheetToUpdate.id
+            );
             consumption = getTimesheetsConsumption(timesheetsFromDay);
             isUpdatingMode = false;
             timesheetToUpdate = null;
@@ -194,25 +209,54 @@
     color={consumption.totalWorktimeUpdatedOnPodio === 7 ? "green" : "red"}
 />
 <div class="mt-10">
-    {#each timesheetsFromDay as timesheet}
-        <div class="mt-2 text-xl flex justify-between">
-            <p>
-                {timesheet.project} - {timesheet.ticket} - {timesheet.worktime} - {timesheet.note}
-            </p>
-            {#if true === isUpdatingMode && timesheet.id === timesheetToUpdate.id}
-                <button type="button" on:click={handleCancelUpdatingMode}>
-                    Annuler
-                </button>
-            {:else}
-                <button
-                    type="button"
-                    on:click={() => handleChangeUpdatingMode(timesheet)}
-                >
-                    Modifier
-                </button>
-            {/if}
-        </div>
-    {/each}
+    <div class="mb-4">
+        <Table shadow>
+            <TableHead defaultRow={false}>
+                <tr>
+                    <TableHeadCell>Projet</TableHeadCell>
+                    <TableHeadCell class="text-center">Ticket</TableHeadCell>
+                    <TableHeadCell class="text-center">Temps</TableHeadCell>
+                    <TableHeadCell class="text-center">Actions</TableHeadCell>
+                </tr>
+            </TableHead>
+            <TableBody class="divide-y">
+                {#each timesheetsFromDay as timesheet}
+                    <TableBodyRow>
+                        {#if timesheet.ticket === 0}
+                            <TableBodyCell colspan="4">Absent</TableBodyCell>
+                        {:else}
+                            <TableBodyCell>{timesheet.project}</TableBodyCell
+                            >
+                            <TableBodyCell class="text-center"
+                                >{timesheet.ticket}</TableBodyCell
+                            >
+                            <TableBodyCell class="text-center"
+                                >{timesheet.worktime} h</TableBodyCell
+                            >
+                            <TableBodyCell class="text-center">
+                                {#if true === isUpdatingMode && timesheet.id === timesheetToUpdate.id}
+                                    <button
+                                        type="button"
+                                        on:click={handleCancelUpdatingMode}
+                                    >
+                                        Annuler
+                                    </button>
+                                {:else}
+                                    <button
+                                        type="button"
+                                        on:click={() =>
+                                            handleChangeUpdatingMode(timesheet)}
+                                    >
+                                        Modifier
+                                    </button>
+                                {/if}
+                            </TableBodyCell>
+                        {/if}
+                    </TableBodyRow>
+                {/each}
+            </TableBody>
+        </Table>
+    </div>
 </div>
 
 {#if 7 > consumption.totalWorktime || true === isUpdatingMode}

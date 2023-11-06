@@ -18,6 +18,7 @@
     } from "../../helpers/timesheetHelper";
     import moment from "moment";
     import { updateTimesheet } from "../../api/timesheet";
+    import { getProjects } from "../../api/project";
 
     const dispatch = createEventDispatcher();
     momentLocale();
@@ -25,6 +26,7 @@
     export let userTimesheets;
     export let bankHolidays;
 
+    let projectsList = getProjects();
     let monthSelected = 0;
     let selectedMonth = moment().subtract(monthSelected, "months").month() + 1;
     let timesheetsFromSelectedMonth = filterTimesheetsFromSelectedMonth(
@@ -69,7 +71,8 @@
     }
 
     function getTicketLink(timesheet) {
-        return "https://www.podio.com/" + timesheet.project + "/ticket/" + timesheet.ticket
+        const projectTemplate = projectsList.find((project) => project.name === timesheet.project);
+        return projectTemplate.podioUrl.replace("{ticket}", timesheet.ticket);
     }
 
     function handleChangeMonth(month) {

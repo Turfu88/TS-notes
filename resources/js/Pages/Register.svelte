@@ -10,7 +10,6 @@
 
     let projects = [];
     let projectsList = getProjects();
-    console.log(projectsList);
 
     const { form, errors, handleChange, handleSubmit } = createForm({
         initialValues: {
